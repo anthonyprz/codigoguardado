@@ -1,0 +1,245 @@
+﻿<%@ Master Language="VB" AutoEventWireup="true" CodeFile="Site.master.vb" Inherits="SiteMaster" %>
+
+<%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
+
+<%@ Register TagPrefix="uc" TagName="IDI" Src="~/idioma.ascx" %>
+<%--<%@ Register TagPrefix="uc" TagName="LOGIN" Src="~/login/login.ascx" %>--%>
+
+<!DOCTYPE html>
+<html lang="es">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%: Page.Title %></title>
+
+    <asp:PlaceHolder runat="server">
+        <%: Scripts.Render("~/bundles/modernizr") %>
+    </asp:PlaceHolder>
+    <%--    
+    <webopt:bundlereference runat="server" path="~/Content/css" />--%>
+    <%--<webopt:bundlereference runat="server" path="~/App_Themes/Simple/css" />--%>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+    
+    <script type="text/javascript">
+        function showModal(control, texto, bbai, bez, panel) {          
+            document.getElementById(panel).children[0].children[0].innerHTML = texto ;
+            //document.getElementById("texto").innerHTML = texto;
+            var ez = document.getElementById(bez);
+            if (control == '') {
+                ez.style.visibility = "hidden";
+                show(panel);
+            } else {
+                var RGlista = $find(control);
+                //edo var RGlista = Sys.Application.findComponent(control);
+                if (RGlista.get_masterTableView().get_selectedItems().length > 0) {
+                    ez.style.visibility = "visible";
+                    show(panel);
+                }
+            }
+            return false;
+        }
+        function show(panel) {
+            var msj = document.getElementById("modal");
+            msj.style.visibility = "visible";
+            msj.style.display = "block";
+            var screenHeight = window.screen.availHeight;
+            var screenWidth = window.screen.availWidth;
+            msj.style.height = screenHeight + "px";
+            msj.style.width = screenWidth + "px";
+
+            //var alerta = document.getElementById("sErroresLoginList"); 
+            var alerta = document.getElementById(panel).children[0];
+            alerta.style.visibility = "visible";
+            alerta.style.display = "block";
+            alerta.style.let = "300px";
+            return true;
+        }
+        function hide() {
+            var msj = document.getElementById("modal");
+            msj.style.visibility = "hidden";
+            return true;
+        }
+    </script>
+
+
+
+
+</head>
+<body>
+
+<script type="text/javascript">
+    var currentLoadingPanel = null;
+    function Requeststart(sender, args) {
+        //alert(args.get_eventTarget());
+        var btn = args.get_eventTarget();
+        
+        if (("ctl00$MainContent$ucFILTRO$bntRecargalista" != btn) && ("ctl00$MainContent$ucFILTRO$btnHidden" != btn)) {
+            currentLoadingPanel = $find("<%= LoadingPanel.ClientID %>");
+            currentLoadingPanel.show("ctl01");
+        }
+        if (("ctl00$MainContent$ucFILTRO$bntRecargalista" == btn)) {
+            $('.filtrolista').css({ "opacity": "0.2" });
+            $('.filtrolista').css({ "pointer-events": "none" });
+        }
+    }
+    function ResponseEnd() {
+        //alert('ResponseEnd');
+        $('.filtrolista').css({ "opacity": "1" });
+        $('.filtrolista').css({ "pointer-events": "auto" });
+        if (currentLoadingPanel != null) currentLoadingPanel.hide("ctl01");
+        currentLoadingPanel = null;
+    }
+
+</script>
+    <form runat="server">
+
+        <asp:ScriptManager runat="server">
+            <Scripts>
+                <%--Para obtener más información sobre cómo agrupar scripts en ScriptManager, consulte http://go.microsoft.com/fwlink/?LinkID=301884 --%>
+                <%--Scripts de marco--%>
+                <asp:ScriptReference Name="MsAjaxBundle" />
+                <asp:ScriptReference Name="jquery" />
+                <asp:ScriptReference Name="bootstrap" />
+                <asp:ScriptReference Name="respond" />
+                <asp:ScriptReference Name="WebForms.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebForms.js" />
+                <asp:ScriptReference Name="WebUIValidation.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebUIValidation.js" />
+                <asp:ScriptReference Name="MenuStandards.js" Assembly="System.Web" Path="~/Scripts/WebForms/MenuStandards.js" />
+                <asp:ScriptReference Name="GridView.js" Assembly="System.Web" Path="~/Scripts/WebForms/GridView.js" />
+                <asp:ScriptReference Name="DetailsView.js" Assembly="System.Web" Path="~/Scripts/WebForms/DetailsView.js" />
+                <asp:ScriptReference Name="TreeView.js" Assembly="System.Web" Path="~/Scripts/WebForms/TreeView.js" />
+                <asp:ScriptReference Name="WebParts.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebParts.js" />
+                <asp:ScriptReference Name="Focus.js" Assembly="System.Web" Path="~/Scripts/WebForms/Focus.js" />
+                <asp:ScriptReference Name="WebFormsBundle" />
+                <%--Scripts del sitio--%>
+            </Scripts>
+        </asp:ScriptManager>
+
+    <telerik:RadAjaxManager runat="server" ID="RadAjaxManager1" DefaultLoadingPanelID="LoadingPanel" >
+        <AjaxSettings>
+            <telerik:AjaxSetting AjaxControlID="Bbuscar">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="ucBUSCAR" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+            <telerik:AjaxSetting AjaxControlID="RadSplitter1">
+                <UpdatedControls>
+                    <telerik:AjaxUpdatedControl ControlID="ucFILTRO" />
+                    <telerik:AjaxUpdatedControl ControlID="ucFICHA" />
+                    <telerik:AjaxUpdatedControl ControlID="ucITINERARIO" />
+                    <telerik:AjaxUpdatedControl ControlID="ucFAVORITOS" />
+                    <telerik:AjaxUpdatedControl ControlID="ucRECITI" />
+                    <telerik:AjaxUpdatedControl ControlID="ucRECFAV" />
+                    <telerik:AjaxUpdatedControl ControlID="ucBUSCAR" />
+                </UpdatedControls>
+            </telerik:AjaxSetting>
+        </AjaxSettings>
+        <ClientEvents OnRequestStart="Requeststart" OnResponseEnd="ResponseEnd" />       
+    </telerik:RadAjaxManager>
+    <%--<telerik:RadAjaxLoadingPanel ID="LoadingPanel" runat="server" Transparency="30" Skin="Default" ZIndex="100000001" >
+    </telerik:RadAjaxLoadingPanel>--%>
+    <telerik:RadAjaxLoadingPanel ID="LoadingPanel" runat="server" Transparency="30" >
+        <div class="loading">
+            <asp:Image ID="Image1" runat="server" ImageUrl="images/loading4.gif" AlternateText="loading"></asp:Image>
+        </div>
+    </telerik:RadAjaxLoadingPanel>
+
+
+    <div style="padding-top:55px; height:100%">
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <img class="logoa" src="<%= ResolveUrl("~/images/logo.png") %>" /><a class="navbar-brand txt_logo" runat="server" href="~/">EHBilduVillabona</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <asp:LoginView runat="server" ID="LoginView1" ViewStateMode="Disabled">
+                        <AnonymousTemplate>
+                            <%--<ul class="nav navbar-nav navbar-right">
+                                <uc:LOGIN runat="server" ID="ucLOGIN" />
+                            </ul>--%>
+
+                            <%--<ul class="nav navbar-nav navbar-right">
+                                <li><a runat="server" href="~/Account/Register">Registrarse</a></li>
+                                <li><a runat="server" href="~/Account/Login">Iniciar sesión</a></li>
+                            </ul>--%>
+                        </AnonymousTemplate>
+                        <LoggedInTemplate>
+                            <ul class="nav navbar-nav navbar-left">
+                                <asp:PlaceHolder runat="server" ID="PHadmin" Visible="false">
+                                    <li><asp:HyperLink ID="HLusuarios" runat="server" Text="Usuarios"></asp:HyperLink></li>
+                                    <li class="dropdown" id="Li1" runat="server">
+                                        <a id="a1" runat="server" href="#" class="dropdown-toggle" data-toggle="dropdown"><asp:Literal runat="server" ID="Lencuestas" text='<%$ Resources:lang,encuestas %>'></asp:Literal> <b class="caret"></b></a>
+                                        <ul class="dropdown-menu">
+                                            <li><asp:HyperLink runat="server" ID="HLcategorias" Text="<%$ Resources:lang,categorias %>"></asp:HyperLink></li>
+                                            <li><asp:HyperLink runat="server" ID="HLencuestasadm" Text="<%$ Resources:lang,encuestas %>"></asp:HyperLink></li>
+                                            
+                                        </ul>
+                                    </li> 
+                                    <li><asp:HyperLink runat="server" ID="HLforumcategorias" Text="Categorias"></asp:HyperLink></li>
+                                    <li><asp:HyperLink runat="server" ID="HLforumtemas" Text="Temas"></asp:HyperLink></li> 
+                                    <li><asp:HyperLink runat="server" ID="HLforumtags" Text="Tags"></asp:HyperLink></li> 
+                                     
+                                </asp:PlaceHolder>
+                                <asp:PlaceHolder runat="server" ID="PHuser">
+                                    <li><asp:HyperLink ID="HLencuetas" runat="server" Text="<%$ Resources:lang,encuestas %>"></asp:HyperLink></li>
+                                    <li><asp:HyperLink ID="HLforo" runat="server" Text="Foro"></asp:HyperLink></li>
+                                </asp:PlaceHolder>
+                            </ul>
+                            <ul class="nav navbar-nav navbar-right">
+                                <li>
+                                    <asp:HyperLink ID="HLuser" runat="server"  />
+                                    <%--<a runat="server" href="~/Account/Manage" title="Manage your account"><%: Context.User.Identity.GetUserName()  %></a>--%>
+                                </li>
+                                <li class="dropdown" id="Gestion_Usu_mvl" runat="server">
+                                    <a id="ajustes_mvl" runat="server" href="#" class="dropdown-toggle ajustes_mvl" data-toggle="dropdown"><%: Resources.idioma.opciones  %><b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                        <li><asp:HyperLink ID="HLconfiguracion" runat="server" Text="Kontua kudeatu"/></li>
+                                        <%--<li><asp:HyperLink ID="HLkudeaketa" runat="server" Text="kudeaketa" Visible="false" /></li>--%>
+                                        <li>
+                                            <asp:LoginStatus runat="server" ID="Logout" LogoutAction="Redirect" LogoutText="Cerrar sesion" LogoutPageUrl="~/" OnLoggingOut="Unnamed_LoggingOut" />
+                                            <%--<asp:HyperLink ID="HLcerrarsesion" runat="server" Text="<%$ Resources:idioma,cerrarsesion %>"/>--%>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </LoggedInTemplate>
+                    </asp:LoginView>
+                   
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <uc:IDI runat="server" ID="ucIDI"  /><%--Visible="false"--%>
+                        </li>
+                        <%--<li>
+                            <div class="informacion" onclick="erakutsimodala();"><img src="images/informacion.png" /></div>
+                        </li>
+                        <li>
+                            <asp:TextBox runat="server" ID="TBbuscar" placeholder="search"></asp:TextBox>
+                            <asp:ImageButton ID="Bbuscar" runat="server" CssClass="find" ImageUrl="~/images/buscar.png" />
+                        </li>--%>
+                     </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container body-content">
+                <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                </asp:ContentPlaceHolder>
+            <%--<hr />
+            <footer>
+                <p>&copy; <%: DateTime.Now.Year %> - Txango</p>
+            </footer>--%>
+        </div>
+    </div>
+
+    <div id="modal" class="modal" style="visibility:hidden; position: fixed; left: 0px; top: 0px; z-index: 3000; background-color: rgba(0, 0, 0, 1); opacity: 0.5; width: 124px; height: 124px;" unselectable="on"></div>
+
+    </form>
+</body>
+</html>
